@@ -58,10 +58,15 @@ public class Matrix {
      * @param maxTreads maximum number of threads to calculate matrix multiplication
      * @return matrix obtained from multiplication
      * @throws MatrixIncompatibilityException if matrices are incompatible with each other (they cannot be multiplied)
+     * @throws IllegalArgumentException if maxThreads < 0
      */
     public Matrix multi(Matrix matrix, int maxTreads) throws MatrixIncompatibilityException {
         if (rows() != matrix.columns() || columns() != matrix.rows()) {
             throw new MatrixIncompatibilityException();
+        }
+
+        if (maxTreads < 0) {
+            throw new IllegalArgumentException("Maximum threads less 0");
         }
 
         Matrix result = null;
@@ -94,6 +99,21 @@ public class Matrix {
         taskThreading.stop();
 
         return result;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Matrix matrix1 = (Matrix) o;
+
+        return Arrays.deepEquals(matrix, matrix1.matrix);
+    }
+
+    @Override
+    public int hashCode() {
+        return Arrays.deepHashCode(matrix);
     }
 
     @Override
