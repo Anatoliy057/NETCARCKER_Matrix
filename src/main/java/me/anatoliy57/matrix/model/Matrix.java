@@ -2,10 +2,21 @@ package me.anatoliy57.matrix.model;
 
 import java.util.Arrays;
 
+/**
+ * Matrix representation class*
+ *
+ * @author Udarczev Anatoliy
+ */
 public class Matrix {
 
+    /** Matrix as a two-dimensional array */
     private final int[][] matrix;
 
+    /**
+     * @param rows number of matrix rows
+     * @param columns number of matrix columns
+     * @throws ZeroLengthMatrixException if columns or rows is 0
+     */
     public Matrix(int rows, int columns) throws ZeroLengthMatrixException {
         if (rows == 0 || columns == 0) {
             throw new ZeroLengthMatrixException();
@@ -13,6 +24,10 @@ public class Matrix {
         matrix = new int[rows][columns];
     }
 
+    /**
+     * @param matrix two-dimensional array representing a matrix
+     * @throws ZeroLengthMatrixException if the size of one of the sides of the matrix is 0
+     */
     public Matrix(int[][] matrix) throws ZeroLengthMatrixException {
         if (matrix.length == 0 || matrix[0].length == 0) {
             throw new ZeroLengthMatrixException();
@@ -36,6 +51,14 @@ public class Matrix {
         return matrix[0].length;
     }
 
+    /**
+     * Creation of a new matrix based on the multiplication of the current and provided matrix
+     *
+     * @param matrix provided matrix
+     * @param maxTreads maximum number of threads to calculate matrix multiplication
+     * @return matrix obtained from multiplication
+     * @throws MatrixIncompatibilityException if matrices are incompatible with each other (they cannot be multiplied)
+     */
     public Matrix multi(Matrix matrix, int maxTreads) throws MatrixIncompatibilityException {
         if (rows() != matrix.columns() || columns() != matrix.rows()) {
             throw new MatrixIncompatibilityException();
@@ -44,6 +67,7 @@ public class Matrix {
         Matrix result = null;
         try {
             result = new Matrix(rows(), matrix.columns());
+
         } catch (ZeroLengthMatrixException ignore) {
         }
         Matrix finalResult = result;
@@ -61,6 +85,7 @@ public class Matrix {
                 });
             }
         }
+
         try {
             taskThreading.join();
         } catch (InterruptedException e) {

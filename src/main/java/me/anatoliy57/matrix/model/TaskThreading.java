@@ -2,16 +2,32 @@ package me.anatoliy57.matrix.model;
 
 import java.util.*;
 
+/**
+ * Class that distributes the transferred tasks to several threads for parallel calculation
+ *
+ * @author Udartsev Anatoliy
+ */
 public class TaskThreading {
 
+    /** Tasks provided */
     private final LinkedList<Runnable> tasks;
+    /** Created threads to execute tasks */
     private final List<Thread> threads;
 
+    /** Object for synchronous distribution of tasks */
     private final Object lock = new Object();
+    /** Object for wait for all passed tasks to complete */
     private final Object join = new Object();
-    private int finishedTasks = 0;
+    /** Completed tasks */
+    private int completedTasks = 0;
+    /** Total number of all tasks */
     private int countTask = 0;
 
+    /**
+     * The constructor immediately creates threads that, in the absence of a task, go into waiting
+     *
+     * @param maxThreads maximum number of threads
+     */
     public TaskThreading(int maxThreads) {
         tasks = new LinkedList<>();
         threads = new ArrayList<>();
@@ -69,8 +85,8 @@ public class TaskThreading {
 
     private void finishTask() {
         synchronized (join) {
-            finishedTasks++;
-            if (countTask == finishedTasks) {
+            completedTasks++;
+            if (countTask == completedTasks) {
                 join.notifyAll();
             }
         }
